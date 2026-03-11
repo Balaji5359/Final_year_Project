@@ -1,0 +1,1329 @@
+A Model for the airport gate assignment problem (AGAP) with greenhouse 
+gas emissions considerations
+Stavroula Bagioneta
+*
+, Konstantia Kontodimou
+ , Konstantinos Kepaptsoglou
+Laboratory of Transportation Engineering, School of Rural, Surveying and Geoinformatics Engineering, National Technical University of Athens, 157 80 Athens, Greece
+ARTICLE INFO
+Keywords:
+Airport gate assignment problem
+Airports
+Genetic algorithm
+Nash equilibrium
+GHG emissions
+ABSTRACT
+This paper investigates the problem of optimally assigning airplanes to airport gates (Airport Gate Assignment 
+Problem — AGAP), with GHG emissions considerations. A multi-objective mathematical programming model is 
+formulated with the objectives of minimizing flights assigned to apron gates, walking distances of connecting 
+passengers, and GHG emissions because of airplane taxiing movements. A genetic algorithm, which incorporates 
+a Nash equilibrium control element, is used to solve the problem. The Nash equilibrium element allows the fast 
+and efficient identification of those genetic algorithm parameters that yield the best solution to the problem. The 
+model and solution process are demonstrated in a hypothetical airport with ten gates, using simulated flight 
+schedule data, which resemble operations of a real-world scaled-down airport with high passenger traffic. Results 
+indicate considerable GHG emission savings and improved passenger walking burden at the airport over a 
+simplified assignment approach. Specifically, the algorithm achieved a reduction of 1356.6 Kg CO2 emissions 
+compared to non-optimized flight distribution, i.e. an average reduction of about 19 liters per aircraft, as well as 
+an additional indirect reduction in total CO2 emissions due to a reduction in delays and congestion.
+1. Introduction
+The significant rise in air traffic over the years before the COVID-19 
+pandemic period has increased complexity in airport ground operations, 
+which, along with other factors, causes delays in airplane departures 
+( Z ´amkov ´a et al., 2019 ). The COVID-19 pandemic had a devastating 
+impact on the airline industry, causing a significant decline in airport 
+traffic ( Sun et al., 2021 ; Wu et al., 2023 ). After the come back to sta -
+bility, the rise continue and overload this period ( Sun et al., 2023 ). 
+Among them, air carrier attributed delays because of late airplane ar -
+rivals occur in about 63 % of delayed flights ( Bureau of Transportation 
+Statistics, 2025 ); these delays are usually attributed to inadequate 
+airport operations and passenger traffic management ( Eurocontrol, 
+2022 , 2024 ). Areas of airports where delays occur include departure 
+gates, taxiways, apron areas and runways, with taxiway-related pro -
+cedures, runway usage, air and ground traffic congestion, weather 
+conditions, and airplane malfunctions being major sources for them 
+( Belobaba, 2009 ).
+Airlines are also focusing on air service quality levels and passenger 
+satisfaction. With delays, this is not possible because they often cause 
+long queues at airports, long waiting times and therefore a not so 
+positive experience for passengers, as they can be a major source of 
+negative emotions and anger for passengers ( Kim & Park, 2016 ). Addi -
+tionally, passengers need to be treated differently because of the diffi -
+culty in achieving relative passenger comfort and avoiding problems 
+such as missed connections, baggage that did not reach the final desti -
+nation and passenger inconvenience. For this reason their responses 
+need to have three basic things: speed, efficiency and reliability ( De 
+Neufville & Odoni, 2013 ). Furthermore, air transportation is a GHG 
+emission-intensive sector; even though air transportation is responsible 
+for 2.5 % of global emissions ( Lee et al., 2021 ), only 10 % of the world ’ s 
+population uses airplanes for travel ( G ¨ossling & Humpe, 2020 ). The 
+outlook is not encouraging, since air transportation generated CO2 
+emissions are expected to increase up to 22 % by 2050 ( European Union 
+(EU) 2015 ).
+The air transportation industry is under growing pressure to reduce 
+emissions as its increasing contribution to global greenhouse gases 
+conflicts with international climate goals as the net-zero emissions 
+target by 2050 ( United Nations, 2021 ).
+To achieve this, IATA estimates that it is essential to focus on more 
+efficient and effective aircraft, using sustainable fuels ( Wandelt et al., 
+2025 ), and implementing policies and strategies to reduce emissions 
+* Corresponding author at: National Technical University of Athens, 9 Iroon Polytechneiou Str, 157 80 Athens, Greece.
+E-mail address: st.bagioneta@gmail.com (S. Bagioneta). 
+Contents lists available at ScienceDirect
+Journal of the Air Transport Research Society
+journal homepag e: www.else vier.com/loc ate/jatrs
+https://doi.org/10.1016/j.jatrs.2025.100074
+Received 19 March 2025; Received in revised form 12 May 2025; Accepted 13 May 2025  
+Journal of the Air Transport Research Society 5 (2025) 100074 
+Available online 14 May 2025 
+2941-198X/© 2025 The Author(s). Published by Elsevier Inc. on behalf of Air Transport Research Society. This is an open access article under the CC BY-NC-ND 
+license ( http://creativecommons.org/licenses/by-nc-nd/4.0/ ). 
+
+( Mello & Rosario, 2024 ). Ground delays do contribute to increased GHG 
+emissions because of taxiing and idling with engines running while on 
+the ground ( Dissanayaka et al., 2020 ) and so the goal is to minimizing 
+that as well.
+Assigning airplanes to departure gates is a critical process in airport 
+ground operations, as it affects passenger services and operations. The 
+so-called “Airport Gate Assignment Problem (AGAP)” is that of allo -
+cating arriving airplanes to airport gates so that delays and operational 
+costs are minimized while operational efficiency and a seamless pas -
+senger experience are achieved ( Das ¸ et al., 2020 ). The flight gate 
+assignment problem is guided by decision-makers’ priorities, which 
+generally fall into two categories: passenger-oriented and 
+airport-oriented. Passenger-oriented factors focus on service quality and 
+satisfaction, including passenger travel distance ( Cheng et al., 2012 ; 
+Ding et al., 2004 , 2005 ; Haghani & Chen, 1998 ; Marinelli et al., 2015 ; 
+Yan & Chang, 1998 ; Yan & Huo, 2001 ), terminal response time ( Kim 
+et al., 2013 ) baggage travel distance ( Haghani & Chen, 1998 ) and pas -
+senger waiting times ( Yan & Huo, 2001 ). However, airport-oriented 
+factors emphasize efficiency and cost reduction, such as flight apron 
+assignments ( Ding et al., 2004 , 2005 ; Marinelli et al. (2015) ., flight-gate 
+preferences ( Dorndorf et al. (2008 , 2012 ), and aircraft handling costs, 
+including towing operations, gate reuse, and taxiing time ( Dorndorf 
+et al., 2008 , 2012 ; Kim et al., 2013 ).
+In this context, this paper proposes a model for the AGAP, which 
+introduces the aspect of minimizing the carbon footprint of airplanes in 
+the assignment process. Indeed, assigning airplanes to gates in such a 
+way that aircraft waiting times, taxiing distances and transfer passengers 
+walking distances are minimized may contribute to both improved op -
+erations and lower GHG emissions ( Dissanayaka et al., 2020 ). The 
+remainder of the paper is structured as follows: In Section 2 , a review of 
+the literature is offered in the subject, while Section 3 presents model 
+developed for the study and the analysis of methodology. Section 4
+showcases an application of the model in a hypothetical airport layout, 
+and conclusions are provided in Section 5 of the paper together that 
+propose further research.
+2. Literature review
+The focus of the airport gate assignment problem (AGAP) is to 
+improve the allocation of airplanes to airport gates and essentially 
+minimize associated passenger and operator costs. Different mathe -
+matical programming models have been introduced over the years for 
+describing the AGAP, along with various techniques adopted for solving 
+the associated mathematical programs ( Bouras et al., 2014 ). In an early 
+study, Mangoubi and Mathaisel (1985) applied a linear programming 
+model and a heuristic for assigning airplanes to gates so that the total 
+walking distances for passengers were minimized. Yan and Chang 
+(1998) formulated the GAP as a network model, which considered 
+different operational constraints and Haghani and Chen (1998) devel -
+oped mathematical programming models for the AGAP, which opti -
+mized total walking distance for passengers and gate utilization. 
+Multi-objective optimization models for gate assignment were pro -
+posed by Yan and Huo (2001) , which considered passenger walking 
+distances, gate utilization, and operational constraints. Dynamic 
+assignment of gates to airplanes was tackled by Xu and Bailey (2001) ; 
+their model was formulated as a mixed integer quadrating program, 
+which attempted to minimize waiting times for both transferring and 
+non-transferring passengers.
+Ding et al. (2004 , 2005 ) investigated the over-constrained AGAP and 
+attempted to minimize gate conflicts and improve gate utilization of 
+gate resources, using heuristics and applying a greedy algorithm and a 
+neighborhood search method for minimizing unassigned flights to a gate 
+and passenger walking distance. Cheng et al. (2012) explored the 
+application of meta-heuristics to the airport gate assignment problem 
+AGAP) and concluded that meta-heuristics can produce efficient solu -
+tions within a reasonable timeframe and Kim et al. (2013) developed a 
+comprehensive scheduling framework that integrates various aspects of 
+airport operations to optimize gate assignments. Minimizing passenger 
+transit time and gate idle time was the focus of Marinelli et al. (2015) .
+In a series of papers, by Dondorf et al. (2008 , 2012 ) the AGAP was 
+modeled as a clique partitioning problem with an or on maintaining 
+robust schedules concerning a reference schedule. Maharjan and Matis 
+(2011) converted the AGAP into a multi-commodity flow network 
+model, which minimized total walking distance for passengers during 
+gate reassignment, and Kumar and Bierlaire (2014) modeled the AGAP 
+by concentrating on connection revenues, minimizing zone usage costs, 
+and increasing the robustness of gate assignments. An alternative 
+approach based on quantum computers and quadratic unconstrained 
+binary optimization for modeling the AGAP was proposed by Stollen -
+werk et al. (2018) . A mixed integer linear programming model was 
+developed by Silva et al. (2020) for the GAP, which considered maxi -
+mization of airport revenues and passenger behavior. Similarly, Wen 
+and He (2020) focused on passenger satisfaction during layovers for the 
+AGAP by minimizing waiting times in their model.
+Asadi et al. (2021) developed a hybrid meta-heuristic algorithm by 
+combining the Shuffled Frog-Leaping Algorithm (SFLA) and the Grass -
+hopper Optimization Algorithm (GOA). This approach overcame the 
+drawbacks of each algorithm, achieving an optimal solution with 
+reduced computational costs, and was tested using a scenario from 
+Frankfurt Airport. Bi et al. (2022) proposed a Branch-and-Price algo -
+rithm (BAPA) solution and improved the solution speed by adding a 
+heuristic search with a certain probability in each search node and 
+verifying the model’s performance by using actual flight data of 
+Kunming Changshui International Airport, China. Karsu and Solyalı 
+(2022) developed a mixed-integer linear programming model to mini -
+mize apron usage and passenger travel distances within the airport. 
+More recently, Shan et al. (2023) indirectly incorporated GHG emission 
+considerations in their AGAP model, aiming to optimize flight assign -
+ments, fuel consumption, and gate assignment robustness. Das and 
+Gzara (2024) presented a column-generation-based algorithm to 
+generate gate schedules that minimized squared slack time while 
+reducing passenger walking distances. Recently, Cao et al. (2024) pro -
+posed a more recent approach, introducing a predict-then-optimize 
+framework; a CNN-LSTM-Attention model was used to predict flight 
+arrival times and employed a bi-objective optimization model for 
+scheduling. Published papers are summarized in Table 1 :
+The concept of Nash Equilibrium offers a realistic and widely 
+accepted solution framework for strategic games where there are no 
+strictly dominant strategies. In a Nash Equilibrium, each player chooses 
+a strategy that is an optimal response to the strategies of the others, with 
+no incentive to unilaterally change it ( Nash, 1950 ). This equilibrium 
+requires rational behavior, shared knowledge of rationality, and aligned 
+expectations among players, ensuring stability of the system under in -
+dividual deviations ( Osborne, 2002 ).
+Overall, the rich literature on the AGAP largely focuses on maxi -
+mizing passenger comfort, by minimizing walking distances traveled by 
+passengers and layover times. Some studies focus on optimizing airport 
+revenues, by minimizing luggage transportation distances, vacant gates, 
+and the time that these remain without an assigned airplane, flight gate 
+preferences, taxiing distances, and airplane handling costs. However, 
+only a handful of studies indirectly consider the environmental impacts 
+of ground operations related to assigning arriving airplanes to gates. In 
+this context, this paper contributes to the literature by proposing and 
+demonstrating a new model and a meta-heuristic model for representing 
+and solving the AGAP. The model considers both passenger aspects 
+walking distances for connecting flights) and GHG emissions produced 
+because of airplane ground operations (taxiing).
+S. Bagioneta et al.                                                                                                                                                                                                                              Journal of the Air Transport Research Society 5 (2025) 100074 
+2 
+
+Table 1 
+Publications on the gate assignment problem.
+Title Authors Year Target Algorithm
+Predicting flight 
+arrival times 
+with deep 
+learning: A 
+strategy for 
+minimizing 
+potential 
+conflicts in gate 
+assignment
+Cao et al. 2024 Maximize 
+proportion of 
+flights assigned 
+to jet bridge 
+gates among all 
+flights, 
+minimize total 
+arrival taxiing 
+distance
+A CNN-LSTM- 
+Attention model 
+to predict flight, 
+deep learning, 
+branch-and- 
+price algorithm, 
+predict-then- 
+optimize 
+framework
+Multiobjective 
+Gate 
+Assignment 
+Model 
+Considering 
+Carbon 
+Emissions
+Shan et al. 2023 Reduce carbon 
+emissions 
+through 
+optimal gate 
+assignment
+Non-dominated 
+Sorting Genetic 
+Algorithm-II 
+(NSGA-II)
+A New 
+Formulation 
+and an 
+Effective 
+Matheuristic 
+for the Airport 
+Gate 
+Assignment 
+Problem
+Karsu and 
+Solyalı
+2022 Minimize apron 
+usage and total 
+passenger 
+walking 
+distance
+Matheuristic, 
+Mixed integer 
+linear 
+programming 
+(MILP)
+The airport gate 
+assignment 
+problem: A 
+Branch-and- 
+Price Approach 
+for improving 
+utilization of 
+jetways
+Bi et al. 2022 Maximize the 
+number of 
+passengers 
+using jetways
+Branch- and- 
+Price algorithm 
+(BAPA)
+Optimal schedule 
+recovery for the 
+aircraft gate 
+assignment 
+with 
+constrained 
+resources
+Asadi et al. 2021 Minimize the 
+total cost 
+caused by delay 
+occurred
+Hybrid meta- 
+heuristic 
+algorithm by 
+combining the 
+Shuffled Frog- 
+Leaping 
+Algorithm 
+(SFLA) and the 
+Grasshopper 
+Optimization 
+Algorithm 
+(GOA).
+Airport Gate 
+Assignment 
+Problem 
+considering 
+Connecting 
+Passengers
+Wen and He 2020 Improve gate 
+utilization, 
+reduce 
+connection 
+time for 
+connecting 
+passengers
+Genetic 
+algorithm with 
+data 
+preprocessing 
+(DP-GA)
+Gate Assignment 
+Problem: a case 
+study of Lisbon 
+airport
+Silva et al. 2020 Combine the 
+gate 
+assignment 
+problem with 
+passenger 
+behavior 
+modeling, 
+maximize 
+airport 
+revenues
+Mixed-integer 
+linear 
+programming 
+model (MILP), 
+Discrete choice 
+modelling 
+(DCM)
+Flight Gate 
+Assignment 
+with a 
+Quantum 
+Annealer
+Stollenwerk 
+et al.
+2018 Minimize 
+transit time for 
+passengers
+D-Wave 
+Quantum 
+annealing
+A Metaheuristic 
+Approach to 
+Solve the Flight 
+Gate 
+Assignment 
+Problem
+Marinelli 
+et al.
+2015 Minimize 
+passenger 
+transit time and 
+gate idle time
+Bee Colony 
+Optimization 
+(BCO)
+Table 1 (continued )
+Title Authors Year Target Algorithm
+Multi-objective 
+Airport Gate 
+Assignment 
+Problem in 
+Planning and 
+Operations
+Prem Kumar 
+and Bierlaire
+2014 Minimize zone 
+usage costs, 
+enhance gate 
+plan 
+robustness, and 
+recover 
+schedules 
+during 
+disruptions
+Optimization 
+programming 
+language
+Airport Gate 
+Scheduling for 
+Passengers, 
+Aircraft, and 
+Operations
+Kim et al. 2013 Improve 
+passenger 
+experience 
+while ensuring 
+robust air-side 
+operations
+Balancing 
+objective 
+function, Tabu 
+search
+The use of meta- 
+heuristics for 
+airport gate 
+assignment
+Cheng et al. 2012 Minimize total 
+passenger 
+walking 
+distance
+Genetic 
+algorithm, Tabu 
+search, 
+Simulated 
+annealing
+An Optimization 
+Model for Gate 
+Reassignment 
+in Response to 
+Flight Delays
+Maharjan 
+and Matis
+2011 Minimize total 
+walking 
+distance for 
+passengers 
+during gate 
+reassignment
+Binary integer 
+programming
+Flight Gate 
+Scheduling 
+with Respect to 
+a Reference 
+Schedule
+Dorndorf 
+et al.
+2012 Maintain robust 
+schedules 
+concerning
+Clique 
+partitioning 
+problem, 
+Heuristic 
+algorithm
+Modelling Robust 
+Flight-Gate 
+Scheduling as a 
+Clique 
+Partitioning 
+Problem
+Dorndorf 
+et al.
+2008 Maximize 
+robustness and 
+preference 
+scores while 
+minimizing 
+unassigned 
+flights and tows
+Heuristic based 
+on the ejection 
+chain algorithm
+The Over- 
+Constrained 
+Airport Gate 
+Assignment 
+Problem
+Ding et al. 2005 Minimize 
+ungated flights 
+and passenger 
+connection 
+distances
+Simulated 
+annealing, 
+Hybrid tabu 
+search
+Aircraft and Gate 
+Scheduling 
+Optimization at 
+Airports
+Ding et al. 2004 Minimize 
+ungated flights 
+and total 
+passenger 
+walking 
+distance
+Greedy 
+algorithm
+The Airport Gate 
+Assignment 
+Problem: 
+Mathematical 
+Model and a 
+Tabu Search 
+Algorithm
+Xu and 
+Bailey
+2001 Minimize 
+passenger 
+connection 
+times
+Mixed-integer 
+quadrating 
+program
+Optimization of 
+multiple 
+objective gate 
+assignments
+Yan and Huo 2001 Minimize 
+passenger 
+walking 
+distances, 
+maximize gate 
+utilization
+Multiple 
+objective zero/ 
+one integer 
+program, 
+weighting 
+method, column 
+generation 
+approach, 
+simplex, branch- 
+and-bound 
+technique
+Optimizing Gate 
+Assignments at 
+Airport 
+Terminals
+Haghani and 
+Chen
+1998 Minimize 
+passenger 
+walking 
+distance and 
+gate ulilization
+Heuristic, 
+Integer 
+programming
+A Network Model 
+for Gate 
+Assignment
+Yan and 
+Chang
+1998 Minimize 
+passenger 
+walking 
+Multi- 
+commodity 
+network flow, 
+(continued on next page)
+S. Bagioneta et al.                                                                                                                                                                                                                              Journal of the Air Transport Research Society 5 (2025) 100074 
+3 
+
+3. Methodology
+3.1. Model
+Without loss of generality, the proposed model considers two plan -
+ning objectives: passenger comfort and environmentally sustainable 
+operations. The former is passenger-oriented and addressed by mini -
+mizing the number of airplanes assigned to an apron gate and the 
+walking distance of travelers in connecting flights ( Dorndorf et al., 
+2007 ). Indeed, walking and/or using a bus to reach an apron gate, as 
+well as walking to a connecting flight are factors strongly affecting the 
+comfort of air travelers and it affects the possibility of being late for the 
+next flight when the transferring time is short. The latter planning 
+objective is introduced in this study, by attempting to minimize GHG 
+produced during taxing. In this context, let:
+G
+T
+Set of Gates in the airport terminal 1,2, … j, … ,m) where j, m 
+random gates;
+G
+A
+Set of Gates in the apron area of the airport 1,2, … n, … ,o) 
+where n,o random gates;
+F Set of Flights taking off/landing at airport 1,2, … i, … ,k) where 
+i,k random flights;
+g Total number of gates;
+f Total number of flights;
+a
+i
+Arrival time of flight i at the gate, i ∀ i ∈ F ;
+b
+i
+Departure time of flight i from the gate i ∀ i ∈ F ;
+wd
+k , l
+Distance between gates for connecting passengers;
+GHG
+j , Rs
+GHG emissions produced between gate and runway take-off 
+point;
+GHG
+Rf , j
+GHG emissions produced between runway landing point and 
+gate;
+p
+i , k
+Number of connecting passengers between flight i and flight i 
+k ∀ i , ∀ k ∈ F ;
+s
+i
+Aircraft Size Category (III, IV, V);
+s
+g
+Gate Size Category (1,2,3);
+T
+b
+Minimum time interval the gate must remain empty between 
+two successive airplanes;
+T
+ta
+Minimum time the aircraft stays at the gate for necessary 
+procedures;
+w
+i
+Objective function weights;
+y
+i , j
+Binary variable (1 if gate j can accept a plane type, 
+0 otherwise);
+x
+i , j
+Binary decision variable (1 if flight i is assigned to gate j , 
+0 otherwise) ∀ i ∈ G, j ∈ F ;
+z
+i , j
+Binary variable (1 if gate j accepts international flights, 
+0 otherwise).
+The model formulation is shown below: 
+min z = w
+1
+⋅
+∑
+n ∈ G
+A
+∑
+i ∈ F
+x
+i , j
++ w
+2
+⋅
+∑
+j ∈ G
+T
+∑
+m ∈ G
+T
+∑
+k ∈ F
+∑
+i ∈ F
+x
+i , j
+⋅ x
+k , m
+⋅ p
+i , k
+⋅ wd
+j , m
++ w
+3
+⋅
+∑
+j ∈ G
+T
+∑
+i ∈ F
+x
+i , j
+⋅
+ 
+GHG
+j , Rs
++ GHG
+Rf , j
+)
+(1) 
+subject to: 
+∑
+j ∈ G
+x
+ij
+= 1 ∀ i ∈ F (2) 
+∑
+j ∈ G
+x
+ij
+≤ 1 ∀ i ∈ F (3) 
+| b
+i
+  a
+i
+| ≥ Tta for x
+ij
+= 1 andx
+ij
+= 1 , ∀ i ∕= k ∈ F (4) 
+x
+ij
++ x
+kj
+≤ 1 ∀ j ∈ G (5) 
+| a
+i
+  b
+k
+| ≥ Tb for x
+ij
+= 1 and x
+kj
+= 1 , ∀ i ∕= k ∈ F (6) 
+x
+ij
+∈ { 0 , 1 } , ∀ i ∈ F , j ∈ Gy
+ij
+∈ { 0 , 1 } , ∀ i ∈ F , j ∈ Gz
+ij
+∈ { 0 , 1 } , ∀ i ∈ F , j ∈ G
+(7) 
+The objective function (1) consists of three weighted components: 
+the first component minimizes the total number of flights corresponding 
+to gates at the apron. There are benefits to having flights loaded at gates 
+in the terminal building instead of the apron: fewer flights in the apron 
+area increase efficiency and facilitate passenger boarding, and there are 
+no emissions from airport buses. The second component reflects the 
+walking distance of travelers from their arrival to their connecting flight. 
+The third component minimizes the total GHG emissions of airplanes 
+moving from their landing spots to their assigned gates and from their 
+assigned gates to the take-off positions for their next flight as a function 
+of airplane consumption, taxiing distance, and idling time. Constraints 
+(2) assign one gate per airplane simultaneously, and constraints (3) 
+ensure that an aircraft can only be assigned to a gate and not be reas -
+signed to a second gate. Constraints (4) set the minimum turnaround 
+time, and constraints (5) ensure that airplanes whose turnaround tim -
+ings overlap cannot be assigned to the same gate. Constraints (6) set the 
+minimum time between successive airplanes assigned to a gate. Finally, 
+constraints (7) are gate type and size constraints, which dictate re -
+strictions on the sizes of airplanes that can be accommodated by a gate 
+and whether a gate can accommodate flights from specific destinations 
+(domestic, international).
+2.2. Solution algorithm
+A genetic algorithm (GA) is used for solving the model; GAs are 
+selected because they offer a large solution space exploration, making it 
+ideal for navigating complex and extensive search spaces. Assignment 
+problems, such as AGAP, can be complex problems because of the large 
+number of gates and flights. Also, the algorithm is well-suited for multi- 
+objective optimization, enabling the simultaneous optimization of 
+multiple criteria, such as taxiing distance and passenger comfort. 
+Indeed, according to the literature review on the AGAP, several studies 
+have exploited GAs for tackling the problem at hand. The proposed GA 
+incorporates a Nash equilibrium control, which aids in both calibrating 
+GA parameters and act as a local optimization mechanism. The rationale 
+behind the Nash equilibrium in a GA is that of ensuring that no single 
+parameter can unilaterally change its value to improve the overall GA 
+performance while other parameters remain fixed.
+The general structure of the GA with Nash control is straightforward: 
+the algorithm starts by setting the GA parameters (number of genera -
+tions, population size, etc.) and the problem data related to flights and 
+gates. An initial population of candidate solutions is generated (popu -
+lation initialization); to ensure these starting solutions are feasible, a 
+solution repair process is performed concerning gate type and size 
+compatibility, as not all aircraft are accepted at all gates, and time 
+overlaps cannot occur. For that initial population of solutions, the 
+objective function (1) is calculated, which acts as the GA candidate so -
+lution fitness measure. The Genetic Algorithm (GA) selects parents 
+based on fitness and performs crossover to exchange genetic informa -
+tion, creating diverse offspring. Mutation is applied to introduce random 
+changes, maintaining variety and preventing the algorithm from 
+Table 1 ( continued )
+Title Authors Year Target Algorithm
+distance and 
+cost
+Lagrangian 
+relaxation
+Optimizing Gate 
+Assignments at 
+Airport 
+Terminals
+Mangoubi 
+and 
+Mathaisel
+1985 Minimize total 
+walking 
+distances for 
+passengers
+(1) a linear 
+programming 
+relaxation of an 
+integer program 
+formulation and 
+(2) a heuristic
+S. Bagioneta et al.                                                                                                                                                                                                                              Journal of the Air Transport Research Society 5 (2025) 100074 
+4 
+
+converging prematurely. To further avoid local minima, elitism is 
+incorporated, preserving the top solutions each generation. Addition -
+ally, strategies like diverse selection methods and higher mutation rates 
+help the GA explore new solutions, ultimately improving global opti -
+mization by balancing exploration and exploitation. The Nash equilib -
+rium control is then applied: for each flight, its possible assignment to 
+every available gate (including space on the runway) is tested. At each 
+trial, the fitness of the modified solution is recalculated. If there is even 
+one case where changing the gate of a single flight leads to a better 
+fitness function value, then the solution is not considered a Nash Equi -
+librium. Conversely, if no gate change for any flight results in an 
+improvement, the solution is regarded as being in Nash Equilibrium. 
+Essentially, this process performs a local optimization check, assessing 
+whether the solution is stable against individual changes, without 
+requiring simultaneous adjustments for all flights. The application of the 
+Nash control allows therefore to efficiently evaluate the performance of 
+different GA parameters for the same number of generations, and also 
+perform a local improvement of GA solutions for that number of gen -
+erations. In terms of the gate assignment problem each flight is treated as 
+a "player" making decisions about which gate to allocate, with the 
+allocation influenced by the actions of other flights (i.e., other players). 
+The Nash Equilibrium (NE) concept is applied as a form of local opti -
+mization, where every small modification to the solution is evaluated. 
+This ensures that the final solution cannot be easily improved through 
+unilateral changes by any single flight. While the concept of Nash 
+Equilibrium is referenced, the problem is not formally defined or solved 
+as a game theory problem. Consequently, traditional game-theoretic 
+mathematical formulations (e.g., payoff calculation) are not employed. 
+The genetic algorithm ensures solution stability by verifying that no 
+individual flight repositioning can improve the overall fitness of the 
+solution. If a solution is in NE, no single flight can change its assignment 
+without negatively impacting the overall system performance and 
+fitness. The genetic algorithm (GA) terminates after a maximum number 
+of generations or convergence of solutions is reached according to the 
+Nash equilibrium control. Note that GHG emissions in the fitness func -
+tion are calculated according to the fuel consumption of each aircraft 
+while on the ground and the total taxi distance traveled, assuming an 
+average taxiing speed and using appropriate conversion factors.
+4. Application
+4.1. Overview and data
+To validate our model, we apply it to a hypothetical airport layout 
+that accommodates domestic and international flights to test our 
+methodology under controlled conditions. Our example airport is based 
+on a scaled-down version of a real-world, high-passenger airport. That 
+means that simulate the ratio of aircraft to gates of an airport with high 
+airport traffic volume because we want to test out the model in difficult 
+situations. These figures are comparable to Gatwick Airport, UK South 
+Terminal, with a ratio of 1.71 ( London Gatwick Airport, 2025 ) and 
+Newark Airport in New Jersey, whose Terminal A has a ratio of 2.03 
+( Aviation Newark Liberty International Airport, 2025 ). For instance, 
+Newark Liberty International Airport (EWR) in a typical four-hour time 
+slot in one terminal, approximately 60 aircraft require gate assignments 
+across 30 gates. To create a manageable yet representative case, we 
+proportionally scale this scenario by a factor of three, resulting in an 
+airport with 20 aircraft and 10 gates. This approach ensures that the 
+complexity of the scheduling problem remains realistic while allowing 
+for efficient testing and analysis. The airport has a single terminal with 
+ten contact gates, an apron area, and one runway. A simulated, 
+four-hour daily peak schedule is set up, with incoming flights assumed to 
+arrive every 10 – 20 min during peaks. This enables us to capture realistic 
+scheduling dynamics without excessive computational overhead. Flights 
+are categorized as either domestic or international and arrive at the 
+same terminal, with only some gates being allowed to handle 
+international flights and while all flights use the same terminal, only a 
+subset of gates is designated for international arrivals due to customs 
+and security requirements. The airport accommodates three common 
+aircraft design groups (III, IV, and V) based on FAA classifications 
+( Federal Aviation Administration, 2024 ). These categories account for 
+differences in aircraft length and wingspan. For reference, an Airbus 
+A320 falls into Category III, while a Boeing 777 belongs to Category V. 
+The fuel consumption estimation based on the basic fuel consumption 
+value with further adjustment to the size of the aircrafts.
+The model can be extended to incorporate additional complexities, 
+such as longer connection distances in multi-terminal airports and 
+enhanced security screening procedures for international arrivals. 
+Following Table 2 , Table 3 and Table 4 present the data used in this 
+application.
+4.2. Results
+GA parameters should be calibrated so that those with the best 
+performance are selected. Therefore, three population sizes (40, 50, and 
+60), three crossover rates (0.2, 0.4, and 0.6), and three mutation rates 
+(0.05, 0.1, and 0.15) are selected. In addition, weights set for the 
+objective function are set without loss of generality to w
+1 
+= 0.3, w
+2 
+=
+0.2, and w
+3 
+= 0.5, prioritizing reducing GHG emissions in airport op -
+erations. The GA is executed 20 times for each parameter combination. 
+GA calibration results are presented in Table 5 . If a solution reaches 
+Nash equilibrium according to the GA control, then no reassignment of 
+gates will lead to a better solution. As per the results, the most critical 
+parameter is the crossover rate because the function value of 0.2 pro -
+vides the best outcomes for all other combinations and a positive Nash 
+equilibrium. The execution time of the algorithm for 100 generations is 
+approximately 19 s.
+According to the calibration results, it is evident that the objective 
+function exhibits variations across different parameters and multiple 
+runs. The lowest value observed is   37,000.00, while the highest value 
+is   39,875.00. In all instances where the program indicated that Nash 
+equilibrium was “ FALSE, ” (meaning no equilibrium), this occurred from 
+20 iterations, and none resulted in a lower outcome. This suggests that 
+although there might have been a better solution, the parameters at each 
+instance failed to detect it. When a solution yields a positive Nash 
+equilibrium “ TRUE ” , one of these solutions is approached the optimal 
+solution. Additionally, solutions with positive Nash equilibrium were re- 
+examined to explore if any iteration provided better results. While GA is 
+a heuristic method and thus cannot guarantee optimality, with this 
+approach we converge toward a highly efficient solution.
+To compare two different assignments before and after the GA 
+application, a simple first-fit assignment was adopted: airplanes are 
+assigned to gates sequentially based on ID, considering type and size 
+constraints. That is, airplanes are placed at the first available gate in 
+ascending order) that meets these constraints. GHG emissions are then 
+calculated for this non-optimized assignment, which only considers 
+constraints and selects gates based on the gate ’ s ID. If none of the gates 
+Table 2 
+Airport gate data.
+Gate 
+ID
+Destination Gate 
+Size
+Taxiing Distance from 
+Landing point (m)
+Taxiing Distance to 
+take off point (m)
+A1 International Size 3 1500 2600
+A2 International Size 2 1400 2400
+A3 International Size 3 1200 1800
+A4 Domestic Size 1 2000 2900
+A5 Domestic Size 3 1300 1900
+A6 Domestic Size 2 1100 1700
+A7 International Size 3 1600 2700
+A8 International Size 3 1450 2500
+A9 Domestic Size 2 1250 1850
+A10 Domestic Size 3 1950 2850
+S. Bagioneta et al.                                                                                                                                                                                                                              Journal of the Air Transport Research Society 5 (2025) 100074 
+5 
+
+Table 3 
+Walking distance (m) between gates.
+Gate ID А 1 А 2 А 3 А 4 А 5 А 6 А 7 А 8 А 9 А 10 Apron
+A1 0 75 150 225 300 375 450 525 600 675 2500
+A2 75 0 75 150 225 300 375 450 525 600 2400
+A3 150 75 0 75 150 225 300 375 450 525 2300
+A4 225 150 75 0 75 150 225 300 375 450 2200
+A5 300 225 150 75 0 75 150 225 300 375 2100
+A6 375 300 225 150 75 0 75 150 225 300 2000
+A7 450 375 300 225 150 75 0 75 150 225 1900
+A8 525 450 375 300 225 150 75 0 75 150 1800
+A9 600 525 450 375 300 225 150 75 0 75 1700
+A10 675 600 525 450 375 300 225 150 75 0 1600
+Apron 2500 2400 2300 2200 2100 2000 1900 1800 1700 1600 0
+Table 4 
+Flight data.
+Flight ID Arrival Time Departure Time Aircraft Class Destination Connection Fuel Consumption (kg/s)
+AF1234 08:00 08:45 IV International DY9012 0248
+BA2345 08:15 09:25 III Domestic ​ 0182
+LH3456 08:30 09:40 V International ​ 0218
+KL4567 08:40 09:30 IV Domestic ​ 0218
+AZ5678 09:00 10:15 IV International ​ 0,15
+IB6789 09:10 10:00 IV International ​ 0456
+SK7890 09:30 10:30 III Domestic ​ 0208
+CB8901 09:45 11:00 V International ​ 0456
+ML9801 09:55 11:10 IV International ​ 0208
+DY9012 10:00 10:30 IV Domestic AF1235 0204
+MY9012 10:15 10:45 V International ​ 0456
+KB6789 10:30 11:10 IV Domestic BA9120 0204
+TT8890 10:45 11:40 IV Domestic ​ 0208
+PT8890 10:55 12:00 IV Domestic ​ 0208
+XA8910 11:00 12:10 V International ​ 0540
+BA9120 11:15 12:15 III Domestic KB6789 0182
+SK0236 11:30 12:30 IV Domestic ​ 0204
+TK0123 11:35 12:55 IV Domestic ​ 0218
+AF2345 11:45 12:45 III Domestic ​ 0182
+TK7890 12:00 14:00 IV International ​ 0204
+Table 5 
+Calibration results.
+ID Population Crossover Rate Mutation Rate Nash Equilibrium Best Fitness Measure Value GHG emissions Reduction (Kg)
+1 30 0.2 0.05 TRUE   37,700.0 1341.288
+2 30 0.2 0.10 TRUE   37,000.0 1344.580
+3 30 0.2 0.15 TRUE   37,350.0 540.623
+4 30 0.4 0.05 FALSE   38,350.0 962.154
+5 30 0.4 0.10 FALSE   38,550.0 558.596
+6 30 0.4 0.15 FALSE   38,750.0 269.522
+7 30 0.6 0.05 FALSE   38,675.0 888.1575
+8 30 0.6 0.10 FALSE   39,125.0 617.649
+9 30 0.6 0.15 FALSE   38,500.0 594.146
+10 40 0.2 0.05 TRUE   37,875.0 915.676
+11 40 0.2 0.10 TRUE   37,275.0 649.907
+12 40 0.2 0.15 TRUE   37,000.0 1356.562
+13 40 0.4 0.05 FALSE   38,425.0 310.075
+14 40 0.4 0.10 FALSE   38,750.0 705.931
+15 40 0.4 0.15 FALSE   38,750.0 1094.216
+16 40 0.6 0.05 FALSE   39,375.0 382.755
+17 40 0.6 0.10 FALSE   39,450.0 589.735
+18 40 0.6 0.15 FALSE   38,800.0 892.371
+19 50 0.2 0.05 TRUE   37,100.0 1350.703
+20 50 0.2 0.10 TRUE   37,875.0 621.138
+21 50 0.2 0.15 TRUE   37,100.0 1194.809
+22 50 0.4 0.05 FALSE   38,525.0 945.103
+23 50 0.4 0.10 FALSE   38,675.0 713.041
+24 50 0.4 0.15 FALSE   38,100.0 500.202
+25 50 0.6 0.05 FALSE   38,575.0 933.385
+26 50 0.6 0.10 FALSE   38,200.0 1235.231
+27 50 0.6 0.15 FALSE   39,875.0 174.063
+S. Bagioneta et al.                                                                                                                                                                                                                              Journal of the Air Transport Research Society 5 (2025) 100074 
+6 
+
+meets the criteria, the aircraft is assigned to a remote gate.
+The best objective function value and thus a high efficiency solution 
+for the problem, to achieve the assignment of aircraft to gates with 
+reduced GHG emissions, is given by the following combination: {4, 8, 2, 
+5, 7, 1, 4, 0, 6, 5, 2, 8, 9, 1, 4, 7, 0, 5, 8, 2}. Moreover, this combination 
+also provides the largest reduction in GHG emissions compared to the 
+first-fit strategy assignment. Since the problem has three components for 
+optimization, the best solution yields a minimum value for the three of 
+them, and not just the one that leads to the greatest reduction in emis -
+sions. Additionally, both the first and second components indirectly 
+contribute to reducing emissions. Indeed, by reducing the number of 
+flights assigned to the apron area, emissions from buses transporting 
+passengers from the apron area to the terminal are reduced. Moreover, 
+by reducing the distance passengers need to travel to reach their con -
+necting gate, the time to get there is also reduced, as are the chances of 
+departure delays. The algorithm reduced CO ₂ emissions by 1356.6 kg 
+compared to unoptimized flight allocations, equivalent to an average 
+fuel savings of about 19 liters per aircraft. For the calculation of CO2 
+emissions, the Fuel Conversion Factor was used, which for the specific 
+Jet-A fuel type is 3.16 Kg CO2/Kg fuel ( IATA, 2022 ).
+Fig. 1 presents the results of the best GAP solution. On the y-axis of 
+this chart are the gates and time on the x-axis is represented in minutes 
+from 7:00 onwards. Each flight is represented by a rectangle whose 
+length corresponds to the amount of time that the aircraft will spend at 
+the gate until its next flight.
+Flight-to-gate assignments have been created based on scheduled 
+flight times, and only minor delays have been considered during the gate 
+allocation process. In the case of significant delays, reassigning flights to 
+new gates becomes necessary, even though rerunning the schedule with 
+the updated arrival/departure times may disrupt the scheduled gate 
+assignments and impact passengers ’ comfort. To minimize the impact of 
+flight delays, the following strategy is adopted: the gate assignments for 
+all flights will remain unchanged up to the flight directly preceding the 
+delayed one; subsequently, any affected flights will be reassigned to 
+minimize deviations from the originally planned schedule, thereby 
+reducing disruption. Considering that flight announcements on airport 
+information boards are typically made 1 – 2 h before departure, the 
+rescheduling process prioritizes minimal changes to the displayed 
+schedule to ensure consistency and passenger convenience. For example, 
+if flight N ο “ TT8890 ” has a 1.5-hour delay (new arrival time Table 6 ), 
+the updated gate assignment will be the following: [4, 8, 2, 5, 7, 1, 4, 0, 
+6, 5, 2, 8, 9, 2, 8, 7, 6, 5, 1, 0].
+4.4. Sensitivity analysis
+A sensitivity analysis was also performed to examine the impact of 
+changing various factors on the optimization results ( Fig. 2 ). Indica -
+tively, based on the analysis, when the distance between gates is reduced 
+to half, the optimized GHG emissions are reduced to 6521 (26 kg 
+decrease) and the optimized walking distance is reduced to 5875 m 
+(3875 m decrease). Also, when the distance between gates is doubled, 
+the optimized GHG emissions are reduced to 5926 kg (621 kg decrease) 
+and the optimized walking distance is equal to 0 (9750 decrease). Based 
+on the results, it is observed that, as the distance between gates is 
+reduced, the importance of this criterion in the objective function is less 
+significant. When the airport becomes significantly larger and the dis -
+tance between gates increases, the walking distance equals zero, as it 
+makes sense to keep passengers from transit flights at the same gates.
+In terms of GHG emissions, there is no standard trend. These insights 
+are valid for this case where the number of transfer passengers is limited 
+(65 pax). Regarding the sensitivity analysis of the distances from the 
+runway to the gate and vice versa, it is normal to observe that as the 
+distances traveled by airplanes increase, CO2 emissions increase. The 
+optimized taxiing distance, which refers to the sum of the distances of all 
+aircraft from the runway to the gate after landing and vice versa from the 
+gate to the runway before takeoff, also increases. It should be noted that 
+this increase (or decrease) is not proportional because the objective 
+function has multiple components. Also, the results of the sensitivity 
+Fig. 1. Proposed GAP solution.
+S. Bagioneta et al.                                                                                                                                                                                                                              Journal of the Air Transport Research Society 5 (2025) 100074 
+7 
+
+analysis indicate the need to meticulously plan airport layouts to ach -
+ieve the best combination of optimized GHG emissions and passenger 
+convenience. In terms of the sensitivity analysis regarding aircraft sizes, 
+the results indicate that variations do not significantly affect optimized 
+CO2 emissions and optimized taxiing distances. Similarly, the sensitivity 
+analysis on airport gates shows that optimized CO2 emissions and 
+operating taxiing distances are not affected by gate size. Fig. 2 shows a 
+summary of the sensitivity analysis.
+To further analyze the impact of integrating GHG emissions in the 
+objective function, a comparative analysis has been provided between 
+two optimization scenarios: (1) the full model, which includes GHG 
+emissions in the objective function, and (2) a simplified version where 
+emissions are excluded (i.e., w3 = 0). The results indicate that in the 
+second model, when emissions are not considered, aircraft are assigned 
+to gates in a manner that reduces total passenger walking distances, by 
+approx. 17 %. However, this comes at a cost since the taxiing distances 
+and CO ₂ emissions increase by approx. 3 %. This trade-off suggests that 
+prioritizing emissions reduction modifies gate assignments in a way that 
+unnecessary aircraft movements are reduced. In that context the opti -
+mization leans towards passenger convenience by reducing passenger 
+walking distances. It highlights the interplay between environmental 
+sustainability and passenger experience, emphasizing the need for a 
+balanced approach in airport gate assignment strategies.
+5. Conclusions
+The assignment of airplanes to airport gates has a clear impact on 
+operational costs, passenger satisfaction, and environmental sustain -
+ability. This paper proposed a model for tackling the associated gate 
+assignment problem (GAP), which minimizes passenger walking efforts 
+and GHG emissions; the model attempts to improve the carbon footprint 
+of an airport and the effort required by travelers to access their con -
+necting flight and demonstrates the significant impact of airfield design 
+on GHG emissions. A genetic algorithm with a Nash equilibrium control 
+was exploited to efficiently and quickly solve the model. The model was 
+demonstrated for a hypothetical airport accommodating a realistic flight 
+schedule, with results demonstrating its performance against a non- 
+optimized airplane-to-gate assignment. In addition, this paper com -
+bines passenger comfort with responsiveness by reducing the gate dis -
+tance between disembarking from the first flight and boarding the 
+second flight.
+By modeling each flight as a self-interested agent seeking optimal 
+gate assignment, airport managers can ensure that the final solution is 
+stable because no single flight can unilaterally change gates to improve 
+the overall performance. This approach enhances operational efficiency, 
+reduces emissions primary with minimizing total distance, and mini -
+mizes gate conflicts, all while ensuring scalable and computationally 
+tractable solutions. Importantly, it enables decision-makers to anticipate 
+and avoid inefficiencies that could arise from suboptimal or unstable 
+gate reassignments, particularly under growing traffic and tighter sus -
+tainability goals. With this game-theoretic perspective we want to in -
+troduces a new way of balancing competing objectives like passenger 
+convenience, environmental impact, and operational constraints in real- 
+world airport environments and open a new way for solve airport ori -
+ented problems into a more game theoretic framework.
+It should be noted, however, that the model has certain limitations; 
+additional factors and operational constraints encountered in the liter -
+ature could have been included in the model, especially those targeting 
+minimizing operational costs and/or maximizing revenues. Also, airline 
+policies, such as low-cost airlines or gate leasing, and competition be -
+tween airlines ( Sun et al., 2024 ) are not considered in the model. Future 
+research could, in that sense, try to balance the contradicting priorities 
+of airports, airline companies, and passengers, along with sustainability 
+aspects in the GAP formulation, and attempt to describe in greater detail 
+passenger and aircraft ground movements affecting those factors.
+Table 6 
+Updated flight data after delay.
+Flight ID Arrival Time Arrival Time (update) Departure Time Departure Time (update) Aircraft Class Destination Connection Fuel Consumption (kg/s)
+TT8890 10:45 12:15 11:40 13:45 IV Domestic – 0208
+Fig. 2. Sensitivity analysis summary.
+S. Bagioneta et al.                                                                                                                                                                                                                              Journal of the Air Transport Research Society 5 (2025) 100074 
+8 
+
+CRediT authorship contribution statement
+Stavroula Bagioneta: Writing – original draft, Visualization, 
+Methodology, Data curation, Conceptualization. Konstantia Kontodi -
+mou: Writing – original draft, Methodology, Conceptualization. Kon -
+stantinos Kepaptsoglou: Writing – review & editing, Supervision, 
+Conceptualization.
+Declaration of competing interest
+The authors declare that they have no known competing financial 
+interests or personal relationships that could have appeared to influence 
+the work reported in this paper.
+Acknowledgements
+No funding was received.
+References
+Asadi, E., Schultz, M., & Fricke, H. (2021). Optimal schedule recovery for the aircraft 
+gate assignment with constrained resources. Computers & Industrial Engineering, 162 . 
+https://doi.org/10.1016/j.cie.2021.107682 . Article 107682.
+Aviation Newark Liberty International Airport. 2025. Retrieved from https://www.ne 
+warkairport.com/flight-tracker?view = VIEW_DEPARTURE & apt = EWR .
+Belobaba, P. (2009). The global airline industry. In P. Belobaba, A. Odoni, & C. Barnhart 
+(Eds.), The global airline industry (pp. 47 – 73). John Wiley & Sons. https://doi.org/ 
+10.1002/9780470744734.ch4 . 
+Bi, J., Wang, F., Ding, C., Xie, D., & Zhao, X. (2022). The airport gate assignment 
+problem: A branch-and-price approach for improving utilization of jetways. 
+Computers & Industrial Engineering, 164 , Article 107878. https://doi.org/10.1016/j. 
+cie.2021.107878
+Bouras, A., Ghaleb, M. A., Suryahatmaja, U. S., & Salem, A. M. (2014). The airport gate 
+assignment problem: A survey. The Scientific World Journal . https://doi.org/ 
+10.1155/2014/923859 . Article 923859.
+Bureau of Transportation Statistics. 2025. (n.d.). Airline On-Time Performance Data . 
+Retrieved from https://transtats.bts.gov/OT_Delay/ot_delaycause1.asp?6B2r 
+= FE & 20 = E & 2r4v1qs41z = FHFJI & 2r4v1q61 = FHFKF .
+Cao, F., Tang, T., Gao, Y., Michler, O., & Schultz, M. (2024). Predicting flight arrival 
+times with deep learning: A strategy for minimizing potential conflicts in gate 
+assignment. Transportation Research Part C: Emerging Technologies, 169 , Article 
+104866. https://doi.org/10.1016/j.trc.2024.104866
+Cheng, C.-H., Ho, S. C., & Kwan, C.-L. (2012). The use of meta-heuristics for airport gate 
+assignment. Expert Systems with Applications, 39 (16), 12430 – 12437. https://doi.org/ 
+10.1016/j.eswa.2012.04.071
+Das, G. S., & Gzara, F. (2024). Column generation-based solution for bi-objective gate 
+assignment problems. Mathematical Methods of Operations Research, 100 (123 – 151). 
+https://doi.org/10.1007/s00186-024-00856-1
+Das ¸ , G. S., Gzara, F., & Stützle, T. (2020). A review on airport gate assignment problems: 
+Single versus multi-objective approaches. Omega, 92 . https://doi.org/10.1016/j. 
+omega.2019.01.008 . Article 102146.
+De Neufville, R., & Odoni, A. (2013). Airport Systems: Planning, Design, and Management 
+(2nd ed.). McGraw-Hill . 
+Ding, H., Lim, A., Rodrigues, B., & Zhu, Y. (2004). New heuristics for over-constrained 
+flight to gate assignments. Journal of the Operational Research Society, 55 (7), 
+760 – 768 .
+Ding, H., Lim, A., Rodrigues, B., & Zhu, Y. (2005). The over-constrained airport gate 
+assignment problem. Computers & Operations Research, 32 (7), 1867 – 1880 .
+Dissanayaka, D. M. M. S., Adikariwattage, V., & Pasindu, H. R. (2020). Evaluation of CO ₂ 
+emission from flight delays at taxiing phase in Bandaranaike International Airport 
+(BIA). Transportation Research Procedia, 48 , 2108 – 2126. https://doi.org/10.1016/j. 
+trpro.2020.08.270
+Dorndorf, U., Drexl, A., Nikulin, Y., & Pesch, E. (2007). Flight gate scheduling: State-of- 
+the-art and recent developments. Omega, 35 (3), 326 – 334. https://doi.org/10.1016/ 
+j.omega.2005.07.001
+Dorndorf, U., Jaehn, F., & Pesch, E. (2008). Modelling robust flight-gate scheduling as a 
+clique partitioning problem. Transportation Science, 42 (3), 263 – 404 .
+Dorndorf, U., Jaehn, F., & Pesch, E. (2012). Flight gate scheduling with respect to a 
+reference schedule. Annals of Operations Research, 194 (177 – 187). https://doi.org/ 
+10.1007/s10479-010-0809-8
+Eurocontrol. (2022) Supporting European Aviation All-Causes Delays to Air Transport in 
+Europe Annual 2022. Retrieved from https://www.eurocontrol.int/publication/all- 
+causes-delays-air-transport-europe-annual-2022 .
+Eurocontrol. (2024). EUROCONTROL European Aviation Overview 2023 . Retrieved from 
+https://www.eurocontrol.int/sites/default/files/2024-01/eurocontrol-european-avi 
+ation-overview-20240118-2023-review.pdf .
+European Union (EU). (2015). Emission Reduction Targets for International Aviation and 
+Shipping. Directorate General for Internal Policies. IP/A/ENVI/2015-11, 
+https://www.europarl.europa.eu/RegData/etudes/STUD/2015/569964/IPOL_STU 
+(2015)569964_EN.pdf .
+Federal Aviation Administration. (2024). Advisory Circular (AC) 150/5300-13A: Airport 
+design . U.S. Department of Transportation. Retrieved from https://www.faa.gov/air 
+ports/resources/advisory_circulars/index.cfm/go/document.current/documentNu 
+mber/150_5300-13 .
+G ¨ossling, S., & Humpe, A. (2020). The global scale, distribution and growth of aviation: 
+Implications for climate change. Global Environmental Change, 65 , Article 102194. 
+https://doi.org/10.1016/j.gloenvcha.2020.102194
+Haghani, A., & Chen, M.-C. (1998). Optimizing gate assignments at airport terminals. 
+Transportation Research Part A: Policy and Practice, 32 (6), 437 – 454. https://doi.org/ 
+10.1016/s0965-8564(98)00005-6
+IATA. IATA Carbon Offset Program Frequently Asked Questions . 19 Apr. 2022.
+Karsu, O., & Solyalı, O. (2022). A new formulation and an effective matheuristic for the 
+airport gate assignment problem. SSRN Electronic Journal . https://doi.org/10.2139/ 
+ssrn.4055150
+Kim, N.-Y., & Park, J.-W. (2016). A study on the impact of airline service delays on 
+emotional reactions and customer behavior. Journal of Air Transport Management, 57 , 
+19 – 25. https://doi.org/10.1016/j.jairtraman.2016.07.005
+Kim, S. H., Feron, E., Clarke, J.-P., Marzuoli, A., & Delahaye, D. (2013). Airport gate 
+scheduling for passengers, aircraft, and operations. In In Tenth USA/Europe Air 
+Traffic Management Research and Development Seminar (ATM2013) . https://doi.org/ 
+10.2514/1.D0079
+Kumar, V. P., & Bierlaire, M. (2014). Multi-objective airport gate assignment problem in 
+planning and operations. Journal of Advanced Transportation, 59 , 902 – 926. https:// 
+doi.org/10.1002/atr.1235
+Lee, D. S., et al. (2021). The contribution of global aviation to anthropogenic climate 
+forcing for 2000 to 2018. Atmospheric Environment, 244 . https://doi.org/10.1016/j. 
+atmosenv.2020.117834 . Article 117834.
+London Gatwick Airport. 2025. Flight Info. Retrieved from https://www.gatwickairport. 
+com/flights .
+Maharjan, B., & Matis, T. I. (2011). An optimization model for gate reassignment in 
+response to flight delays. Journal of Air Transport Management, 17 (4), 256 – 261. 
+https://doi.org/10.1016/j.jairtraman.2011.02.012
+Mangoubi, R. S., & Mathaisel, D. F. X. (1985). Optimizing gate assignments at airport 
+terminals. Transportation Science, 19 (2), 173 – 188 .
+Marinelli, M., Dell ’ Orco, M., & Sassanelli, D. (2015). A metaheuristic approach to solve 
+the flight gate assignment problem. Transportation Research Procedia, 5 , 211 – 220. 
+https://doi.org/10.1016/j.trpro.2015.01.013
+Mello, Fabiana Peixoto de, & Rosario, Macario (2024). Assessing the efficacy of EU 
+greenwashing directive: A study of European airlines ’ voluntary carbon offset 
+programs. Journal of the Air Transport Research Society, 3 , Article 100028. https:// 
+doi.org/10.1016/j.jatrs.2024.100028 . VolumeISSN 2941-198X.
+Nash, J. (1950). Non-Cooperative Games . Princeton University (PhD thesis) .
+Osborne, M. J. (2002). An Introduction to Game Theory (1st ed.). Oxford University Press . 
+Shan, Y., et al. (2023). Multiobjective gate assignment model considering carbon 
+emissions. International Journal of Environmental Research and Public Health, 20 (5). 
+https://doi.org/10.3390/ijerph20053952 . Article 3952.
+Silva, J., Kalakou, S., & Andrade, A. (2020). Gate assignment problem: A case study of 
+Lisbon airport.
+Stollenwerk, T., et al. (2018). Flight gate assignment with a quantum annealer. ArXiv . 
+https://doi.org/10.48550/arxiv.1811.09465
+Sun, X., Wandelt, S., & Zhang, A. (2023). Aviation under the COVID-19 pandemic: A 
+synopsis from normalcy to chaos and back. Journal of the Air Transport Research 
+Society, 1 (1), 136 – 151. https://doi.org/10.59521/8F3EEB54038C692E . ISSN 2941- 
+198X.
+Sun, X., Wandelt, S., Zheng, C., & Zhang, A. (2021). COVID-19 pandemic and air 
+transportation: Successfully navigating the paper hurricane. Journal of Air Transport 
+Management, 94 , Article 102062. https://doi.org/10.1016/j. 
+jairtraman.2021.102062 . ISSN 0969-6997.
+Sun, X., Zheng, C., Wandelt, S., & Zhang, A. (2024). Airline competition: A 
+comprehensive review of recent research. Journal of the Air Transport Research 
+Society, 2 , Article 100013. https://doi.org/10.1016/j.jatrs.2024.100013 . ISSN 2941- 
+198X.
+United Nations. “ COMMITMENT to FLY NET ZERO 2050 | Department of Economic and 
+Social Affairs. ” Sdgs.un.org , 2021, sdgs.un.org/partnerships/commitment-fly-net- 
+zero-2050.
+Wandelt, Sebastian, Zhang, Yahua, & Sun, Xiaoqian (2025). Sustainable aviation fuels: A 
+meta-review of surveys and key challenges. Journal of the Air Transport Research 
+Society, 4 , Article 100056. https://doi.org/10.1016/j.jatrs.2024.100056 . ISSN 2941- 
+198X.
+Wen, K., & He, Y. (2020). Airport gate assignment problem considering connecting 
+passengers. In Proceedings of the 2020 International Conference on Artificial Intelligence 
+and Information Systems (pp. 248 – 254). https://doi.org/10.1109/ 
+ICAIIS49377.2020.9194926
+Wu, X., Fu, X., Lei, Zheng, & Wang, Kun (2023). Impact of the COVID-19 Pandemic on 
+multi-airport systems worldwide. Journal of the Air Transport Research Society, 1 (1), 
+117 – 135. https://doi.org/10.59521/225FA3D62802E847 . ISSN 2941-198X.
+Xu, J., & Bailey, G. (2001). The airport gate assignment problem: Mathematical model 
+and a tabu search algorithm. In Proceedings of the 34th Annual Hawaii International 
+Conference on System Sciences (Vol. 3) .
+S. Bagioneta et al.                                                                                                                                                                                                                              Journal of the Air Transport Research Society 5 (2025) 100074 
+9 
+
+Yan, S., & Chang, C.-M. (1998). A network model for gate assignment. Journal of 
+Advanced Transportation, 32 (2), 176 – 189. https://doi.org/10.1002/atr.5670320204
+Yan, S., & Huo, C.-M. (2001). Optimization of multiple objective gate assignments. 
+Transportation Research Part A: Policy and Practice, 35 (5), 413 – 432. https://doi.org/ 
+10.1016/S0965-8564(99)00065-8
+Z ´amkov ´a, M., Prokop, M., & Stolín, R. (2019). A review of flight delay causes at Spanish 
+airports based on statistical analysis of categorical data. In AIP Conference 
+Proceedings . https://doi.org/10.1063/1.5114423 , 2116, Article 400009.
+S. Bagioneta et al.                                                                                                                                                                                                                              Journal of the Air Transport Research Society 5 (2025) 100074 
+10 
