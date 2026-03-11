@@ -1,0 +1,10 @@
+feature,importance
+numeric__fuel_burn_rate,0.37754679393304463
+numeric__arrival_hour,0.3623171142494252
+numeric__expected_passengers,0.18291318296781675
+numeric__taxi_distance_feature,0.06504651302268585
+categorical__aircraft_type_Small,0.00536695634740486
+categorical__flight_type_Domestic,0.0036392805317865006
+categorical__aircraft_type_Medium,0.0023325111962726355
+categorical__flight_type_International,0.0008376477515636307
+categorical__aircraft_type_Large,0.0

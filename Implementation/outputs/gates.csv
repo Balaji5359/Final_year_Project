@@ -1,0 +1,9 @@
+gate_id,gate_type,gate_size,distance_from_runway,distance_from_terminal_center
+G01,Domestic,Medium,1764.65,589.96
+G02,International,Medium,535.76,381.76
+G03,Domestic,Medium,1693.81,511.39
+G04,International,Large,992.95,232.25
+G05,Domestic,Large,442.54,634.51
+G06,Domestic,Small,1449.23,317.53
+G07,International,Large,1645.03,601.52
+G08,Domestic,Small,1026.75,109.35

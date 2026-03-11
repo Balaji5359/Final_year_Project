@@ -1,0 +1,66 @@
+{\rtf1\ansi\deff0
+{\fonttbl{\f0 Times New Roman;}}
+\fs24
+\pard\qc\b Intelligent Airport Gate Assignment Using Machine Learning and Multi-Objective Optimization\b0\par
+\pard\qc R. Balaji\par
+\pard\qc Final Year Project Prototype\par
+\pard\sa180\par
+\pard\b Abstract.\b0 Airport gate assignment affects turnaround coordination, passenger movement, and airside efficiency. This document reports an implementation-driven prototype for the Airport Gate Assignment Problem built from a synthetic airport operations pipeline, a delay-prediction model selection layer, and a constrained optimization engine. The system generates realistic flight and gate records, trains multiple regression models to estimate delay, and uses the selected model inside a genetic-algorithm-based search to optimize gate allocation under gate-type, gate-size, and time-overlap constraints. In the exported experiment with 30 flights, 8 gates, and random seed 42, the best predictive model was Random Forest with RMSE 8.855 and MAE 7.993. Compared with the random baseline assignment used in evaluation, the optimized assignment reduced CO2 proxy by 5.628 percent and reduced average predicted delay by 0.829 percent, while increasing average passenger walking distance by 9.760 percent. The study demonstrates a transparent academic prototype for combining prediction and optimization in airport operations research.\par
+\pard\sa120\b Keywords.\b0 Airport Gate Assignment Problem, AGAP, machine learning, genetic algorithm, Streamlit, multi-objective optimization.\par
+\pard\sa180\par
+\pard\b 1. Introduction\b0\par
+\pard Airport gate assignment is a constrained decision problem in which flights must be matched to limited gate resources while respecting aircraft compatibility, terminal service requirements, and schedule conflicts. Poor assignments can increase taxiing effort, passenger walking burden, and disruption propagation. This project implements a compact research prototype that connects prediction and optimization in one pipeline. Instead of optimizing purely static cost terms, the system estimates delay behavior from generated operational features and uses those predictions as part of the gate-assignment fitness function.\par
+\pard\sa120\b 2. Problem Statement\b0\par
+\pard The implemented system solves a constrained AGAP variant in which each flight must be assigned to exactly one gate. A feasible assignment must satisfy four rules: gate-size compatibility, gate-type compatibility, non-overlap between temporally conflicting flights at the same gate, and complete assignment coverage. The optimization objective combines passenger walking cost, taxiing cost, CO2 proxy cost, and predicted delay penalty, with infeasible chromosomes penalized during search.\par
+\pard\sa120\b 3. Repository-Driven System Design\b0\par
+\pard The implementation is modular. The file src/data.py generates synthetic gates and flights. The file src/model.py builds features, trains candidate regressors, and extracts feature importance. The file src/optimize.py defines compatibility checks, the fitness function, a genetic-algorithm-style search process, and a first-fit fallback. The file src/evaluate.py computes assignment metrics. The file src/pipeline.py orchestrates one complete experiment and exports CSV outputs. The application is exposed through app.py and run_pipeline.py.\par
+\pard\sa120\b 4. Methodology\b0\par
+\pard\b 4.1 Synthetic Data Generation.\b0 Flight attributes include flight identifier, arrival and departure time, aircraft type, flight type, passenger demand, historical delay, taxi distances, fuel burn rate, and an initial assigned gate. Gate attributes include gate identifier, gate type, gate size, runway distance, and terminal-center distance. The generator creates clustered arrivals and realistic turnaround durations so that gate conflicts arise naturally.\par
+\pard\b 4.2 Delay Prediction Layer.\b0 The learning target is historical_delay_minutes. The implemented feature set uses aircraft type, flight type, arrival hour, expected passengers, taxi distance feature, and fuel burn rate. The candidate models are Linear Regression, Random Forest Regressor, and XGBoost when available. RMSE and MAE are used for model selection.\par
+\pard\b 4.3 Optimization Layer.\b0 The optimizer represents one chromosome as a full gate assignment across flights. The implemented objective weights are 0.35 for walking cost, 0.20 for taxi cost, 0.40 for CO2 proxy cost, and 0.05 for predicted delay cost. The search loop uses initialization, fitness evaluation, elite retention, one-point crossover, mutation, and early stopping. If the final best chromosome is infeasible, the implementation falls back to a first-fit assignment.\par
+\pard\sa120\b 5. Experimental Setup\b0\par
+\pard The current exported results correspond to the repository default configuration: 30 flights, 8 gates, and random seed 42. The evaluation baseline in src/pipeline.py is a random gate assignment, while the optimizer internally uses a feasible first-fit assignment as its initial reference chromosome.\par
+\pard\sa120\b 6. Results\b0\par
+\pard\b 6.1 Model Performance.\b0\par
+\pard Model\tab RMSE\tab MAE\par
+\pard RandomForest\tab 8.855\tab 7.993\par
+\pard LinearRegression\tab 10.355\tab 9.076\par
+\pard The Random Forest model achieved the best error profile and was selected for optimization-time delay prediction.\par
+\pard\b 6.2 Top Feature Importance.\b0\par
+\pard Feature\tab Importance\par
+\pard numeric__fuel_burn_rate\tab 0.3775\par
+\pard numeric__arrival_hour\tab 0.3623\par
+\pard numeric__expected_passengers\tab 0.1829\par
+\pard numeric__taxi_distance_feature\tab 0.0650\par
+\pard categorical__aircraft_type_Small\tab 0.0054\par
+\pard categorical__flight_type_Domestic\tab 0.0036\par
+\pard\b 6.3 Assignment Comparison.\b0\par
+\pard Metric\tab Baseline\tab Optimized\tab Change\par
+\pard total_co2_proxy\tab 2312285.060\tab 2182149.026\tab 5.628 percent improvement\par
+\pard avg_passenger_walking_distance\tab 438.094\tab 480.852\tab -9.760 percent\par
+\pard avg_predicted_delay_minutes\tab 17.185\tab 17.042\tab 0.829 percent improvement\par
+\pard gate_utilization_percent\tab 100.000\tab 100.000\tab 0.000 percent\par
+\pard The optimized assignment reduced the environmental proxy and slightly reduced predicted delay. The trade-off was a higher average walking distance. Gate utilization remained unchanged because the exported scenario already used all available gates.\par
+\pard\sa120\b 7. Discussion\b0\par
+\pard The implementation succeeds as an integrated research pipeline because data generation, model selection, optimization, evaluation, dashboard presentation, and CSV export all run through a single experiment workflow. The results also show a realistic multi-objective trade-off rather than an unrealistic improvement in every metric. The reported gains should therefore be interpreted as controlled proof-of-concept evidence, not deployment-ready airport performance estimates.\par
+\pard\sa120\b 8. Limitations\b0\par
+\pard 1. The dataset is synthetic and does not capture full airport operational variability.\par
+\pard 2. The environmental metric is a comparative CO2 proxy, not a validated emissions inventory.\par
+\pard 3. The evaluation baseline is random, so stronger baselines could narrow the apparent gains.\par
+\pard 4. The experiments are based on single exported runs rather than repeated trials with confidence intervals.\par
+\pard 5. No exact optimization benchmark is included for comparison.\par
+\pard\sa120\b 9. Conclusion and Future Work\b0\par
+\pard This implementation demonstrates that a delay-aware gate assignment workflow can be built as a coherent academic prototype using synthetic data, regression-based delay prediction, and multi-objective evolutionary search. In the current exported run, the system improved CO2 proxy and predicted delay relative to the evaluation baseline, while exposing a measurable walking-distance trade-off. Future work should focus on real airport datasets, repeated multi-seed experiments, stronger baselines, exact-solver comparisons, and richer objective terms such as passenger connections, fairness across gates, and disruption recovery.\par
+\pard\sa120\b 10. References\b0\par
+\pard 1. README.md\par
+\pard 2. docs/methodology.md\par
+\pard 3. src/data.py\par
+\pard 4. src/model.py\par
+\pard 5. src/optimize.py\par
+\pard 6. src/evaluate.py\par
+\pard 7. src/pipeline.py\par
+\pard 8. app.py\par
+\pard 9. outputs/model_metrics.csv\par
+\pard 10. outputs/feature_importance.csv\par
+\pard 11. outputs/comparison.csv\par
+}
